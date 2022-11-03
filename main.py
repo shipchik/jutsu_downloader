@@ -28,7 +28,7 @@ def download_videos(links, scraper, directory_name):
 def main():
     scraper = cloudscraper.create_scraper(delay=10, browser={'custom': 'ScraperBot/1.0', })
     link = input("Hello, please enter an anime link from jut.su(ex. https://jut.su/chainsaw-man/): \n")
-    # count = input("Write a count of series. Skip if all:")
+    count = input("Write a count of series. Skip if all:")
 
     sub_list = ['https://jut.su/', 'jut.su/', '/']
     name = link
@@ -48,11 +48,15 @@ def main():
     soup = BeautifulSoup(response.text, "html.parser")
     series = soup.find_all("a", class_=["short-btn black video the_hildi", "short-btn green video the_hildi"])
     links = []
+    i=1
     for serie in series:
+        if i==count:
+            break
         response = scraper.get(f'https://jut.su{serie["href"]}')
         soup = BeautifulSoup(response.content, "html.parser")
         inf = soup.find_all('source', res=qual[int(quality)])
         links.append(inf[0]['src'])
+        i+=1
 
     download_videos(links, scraper, directory_name=name)
 
