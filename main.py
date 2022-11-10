@@ -30,6 +30,7 @@ def main():
     link = input("Hello, please enter an anime link from jut.su(ex. https://jut.su/chainsaw-man/): \n")
     count = input("Write a count of series. Skip if all:")
 
+
     sub_list = ['https://jut.su/', 'jut.su/', '/']
     name = link
     for sub in sub_list:
@@ -50,7 +51,7 @@ def main():
     links = []
     i=1
     for serie in series:
-        if i==count:
+        if i==count and count!='':
             break
         response = scraper.get(f'https://jut.su{serie["href"]}')
         soup = BeautifulSoup(response.content, "html.parser")
