@@ -5,6 +5,14 @@ import shutil
 
 
 def download_videos(links, scraper, directory_name):
+    print(f"всего {links.count()} серий")
+    fr=int(input("from: "))
+    to=input("to(skip if all):")
+    if to=='':
+        to=len(links)
+    else:
+        to=int(to)
+    
     video_quantity = len(links)
     try:
         os.mkdir(f"./{directory_name}")
@@ -15,8 +23,8 @@ def download_videos(links, scraper, directory_name):
         pass
 
     i = 1
-    for link in links:
-        r = scraper.get(link, stream=True)
+    for i in range(fr-1,to-1,1):
+        r = scraper.get(links[i], stream=True)
         with open(f'./{directory_name}/{i}.mp4', 'wb') as file:
             for chunk in r.iter_content(chunk_size=1024 * 1024):
                 if chunk:
@@ -28,7 +36,7 @@ def download_videos(links, scraper, directory_name):
 def main():
     scraper = cloudscraper.create_scraper(delay=10, browser={'custom': 'ScraperBot/1.0', })
     link = input("Hello, please enter an anime link from jut.su(ex. https://jut.su/chainsaw-man/): \n")
-    count = input("Write a count of series. Skip if all:")
+    
 
 
     sub_list = ['https://jut.su/', 'jut.su/', '/']
@@ -58,7 +66,7 @@ def main():
         inf = soup.find_all('source', res=qual[int(quality)])
         links.append(inf[0]['src'])
         i+=1
-
+    
     download_videos(links, scraper, directory_name=name)
 
 
