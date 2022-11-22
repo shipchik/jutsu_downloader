@@ -2,10 +2,12 @@ from bs4 import BeautifulSoup
 import cloudscraper
 import os
 import shutil
+import shutil
+from tqdm.auto import tqdm
 
 
 def download_videos(links, scraper, directory_name):
-    print(f"всего {links.count()} серий")
+    print(f"всего {len(links)} серий")
     fr=int(input("from: "))
     to=input("to(skip if all):")
     if to=='':
@@ -22,15 +24,15 @@ def download_videos(links, scraper, directory_name):
     finally:
         pass
 
-    i = 1
+    
     for i in range(fr-1,to-1,1):
-        r = scraper.get(links[i], stream=True)
-        with open(f'./{directory_name}/{i}.mp4', 'wb') as file:
-            for chunk in r.iter_content(chunk_size=1024 * 1024):
-                if chunk:
-                    file.write(chunk)
-            print(f'{i}/{video_quantity} video downloaded')
-        i += 1
+        with scraper.get(links[i], stream=True) as r:
+            total_length = int(r.headers.get("Content-Length"))
+            with tqdm.wrapattr(r.raw, "read", total=total_length, desc="")as raw:
+                with open(f'./{directory_name}/{i}.mp4', 'wb') as file:
+                    shutil.copyfileobj(raw, file)
+            print(f'{i+1}/{video_quantity} video downloaded')
+        
 
 
 def main():
@@ -59,8 +61,7 @@ def main():
     links = []
     i=1
     for serie in series:
-        if i==count and count!='':
-            break
+        
         response = scraper.get(f'https://jut.su{serie["href"]}')
         soup = BeautifulSoup(response.content, "html.parser")
         inf = soup.find_all('source', res=qual[int(quality)])
