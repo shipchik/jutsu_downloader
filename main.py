@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import cloudscraper
 import os
 import shutil
-import shutil
 from tqdm.auto import tqdm
 
 
