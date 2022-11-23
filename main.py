@@ -28,7 +28,7 @@ def download_videos(links, scraper, directory_name):
         with scraper.get(links[i], stream=True) as r:
             total_length = int(r.headers.get("Content-Length"))
             with tqdm.wrapattr(r.raw, "read", total=total_length, desc="")as raw:
-                with open(f'./{directory_name}/{i}.mp4', 'wb') as file:
+                with open(f'./{directory_name}/{i+1}.mp4', 'wb') as file:
                     shutil.copyfileobj(raw, file)
             print(f'{i+1}/{to} video downloaded')
         
